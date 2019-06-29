@@ -33,7 +33,7 @@ argparser.add_argument(
 argparser.add_argument(
     '-i',
     '--input',
-   help='path to an image or an video (mp4 format)')
+   help='path to an image')
 
 def read_file(DIR, count, filename, writer, yolo, config, model_sm):
     image = cv2.imread(DIR)
@@ -48,9 +48,8 @@ def read_file(DIR, count, filename, writer, yolo, config, model_sm):
             ymin = int(box.ymin * image_h)
             xmax = int(box.xmax * image_w)
             ymax = int(box.ymax * image_h)
-            file_name = "2018_02-13_1418_left/" + filename[:-4]
+            file_name = "2018-03-23_1352_right/" + filename[:-4]
             if cl != '0':
-                #writer.list_line([file_name, xmin, ymin, xmax, ymax, cl])
                 writer.writerow([file_name, xmin, ymin, xmax, ymax, cl])
     print(len(boxes), 'boxes are found')
 
@@ -72,27 +71,25 @@ def _main_(args):
                 max_box_per_image   = config['model']['max_box_per_image'],
                 anchors             = config['model']['anchors'])
 
+    model_sm = sp.load_small_model()
+
     ###############################
     #   Load trained weights
     ###############################
-    model_sm = sp.load_small_model()
     yolo.load_weights('full_yolo_sign_full_dataset.h5')
 
     ###############################
     #   Predict bounding boxes 
     ###############################
-    DIR = 'image2/'
+    #DIR = 'image5/'
     count = 0
-    with open('output.tsv', 'wt') as out_file:
+    with open('output.tsv', 'w') as out_file:
         writer = csv.writer(out_file, delimiter='\t')
-        writer.writerow(["frame", "xtl", "ytl", "xbr", "ybr", "class"])
-   # writer = tsv.TsvWriter(open("answers.tsv", "w"))
-       # writer.line("frame", "xtl", "ytl", "xbr", "ybr", "class")
-        filenames = os.listdir(DIR)
+        filenames = os.listdir(image_path)
         filenames.sort()
         for filename in filenames:
             if filename.endswith('.jpg'):
-                read_file(DIR + filename, count, filename, writer, yolo, config, model_sm)
+                read_file(image_path + filename, count, filename, writer, yolo, config, model_sm)
                 count += 1
 
 

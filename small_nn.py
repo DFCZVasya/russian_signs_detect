@@ -23,7 +23,6 @@ class small_predict:
         loaded_model.load_weights("signs_small_model.h5")
         print("Loaded model from disk")
 
-        # evaluate loaded model on test data
         loaded_model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
         print("model compile successfuly!")
         print(loaded_model.summary())
